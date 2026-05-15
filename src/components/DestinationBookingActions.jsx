@@ -17,18 +17,26 @@ export default function DestinationBookingActions({
   accent,
   data,
 }) {
-  const handleBooking = async (booking_data) => {
-    const response = await createBooking(booking_data);
-    console.log(response);
-    if (response.acknowledged) {
-      toast.success("Booking created successfully");
-    } else {
-      toast.error("Failed to create booking");
-    }
-  };
   const { data: session } = authClient.useSession();
   const user = session?.user;
   const sessionId = session?.session?.id;
+
+  const handleBooking = async (booking_data) => {
+    if (!user?.id) {
+      toast.error("Sign in to book a trip");
+      return;
+    }
+    try {
+      const response = await createBooking(booking_data);
+      if (response?.acknowledged) {
+        toast.success("Booking created successfully");
+      } else {
+        toast.error("Failed to create booking");
+      }
+    } catch {
+      toast.error("Failed to create booking");
+    }
+  };
 
   const [dateYmd, setDateYmd] = useState(() => {
     const today = ymd(new Date());

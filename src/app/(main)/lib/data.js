@@ -1,6 +1,8 @@
+const API_BASE = process.env.NEXT_PUBLIC_WANDERLUST_API_URL;
+
 export const fetchDestinations = async () => {
   try {
-    const response = await fetch("http://localhost:8000/destinations", {
+    const response = await fetch(`${API_BASE}/destinations`, {
       cache: "no-store",
     });
     if (!response.ok) return [];
@@ -12,14 +14,14 @@ export const fetchDestinations = async () => {
 };
 
 export const fetchDestinationById = async (id) => {
-  const response = await fetch(`http://localhost:8000/destinations/${id}`);
+  const response = await fetch(`${API_BASE}/destinations/${id}`);
   const data = await response.json();
   console.log(data);
   return data;
 };
 
 export const addDestination = async (data) => {
-  const response = await fetch("http://localhost:8000/destinations", {
+  const response = await fetch(`${API_BASE}/destinations`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -30,7 +32,7 @@ export const addDestination = async (data) => {
 };
 
 export const deleteDestination = async (id) => {
-  const response = await fetch(`http://localhost:8000/destinations/${id}`, {
+  const response = await fetch(`${API_BASE}/destinations/${id}`, {
     method: "DELETE",
   });
   return response.json();
@@ -38,21 +40,21 @@ export const deleteDestination = async (id) => {
 
 export const fetchBookingsByUserId = async (user_id) => {
   const response = await fetch(
-    `http://localhost:8000/bookings?user_id=${user_id}`,
+    `${API_BASE}/bookings?user_id=${user_id}`,
   );
   return response.json();
 };
 
 export const deleteBooking = async (id, user_id) => {
   const response = await fetch(
-    `http://localhost:8000/bookings/${id}?user_id=${user_id}`,
+    `${API_BASE}/bookings/${id}?user_id=${user_id}`,
     { method: "DELETE" },
   );
   return response.json();
 };
 
 export const createBooking = async (booking_data) => {
-  const response = await fetch("http://localhost:8000/bookings", {
+  const response = await fetch(`${API_BASE}/bookings`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
