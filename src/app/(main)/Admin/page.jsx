@@ -42,9 +42,10 @@ export default function Admin() {
     }
   };
   return (
-    <div className="min-h-screen bg-white px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-3xl">
-        <h1 className="mb-8 font-serif text-3xl font-normal tracking-tight text-gray-900 sm:text-4xl">
+    <div className="min-h-screen px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-3xl animate-fade-in-up">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#33A1C9]">Admin</p>
+        <h1 className="mb-8 mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
           Add New Travel Package
         </h1>
 

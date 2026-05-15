@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button, Spinner, Surface } from "@heroui/react";
 import { toast } from "sonner";
+import Reveal from "@/components/motion/Reveal";
 import UserAvatar from "@/components/UserAvatar";
 import { authClient } from "../lib/auth-client";
 
@@ -75,12 +76,16 @@ export default function ProfilePage() {
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-10 sm:py-14">
-      <div className="mb-8">
-        <h1 className="text-3xl font-semibold tracking-tight text-neutral-900">Profile</h1>
-        <p className="mt-1 text-sm text-neutral-600">Your Wanderlast account</p>
-      </div>
+      <Reveal>
+        <div className="mb-8">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#33A1C9]">Account</p>
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-neutral-900">Profile</h1>
+          <p className="mt-1 text-sm text-neutral-600">Your Wanderlast account</p>
+        </div>
+      </Reveal>
 
-      <Surface variant="default" className="overflow-hidden p-0 shadow-sm">
+      <Reveal delay={100}>
+      <Surface variant="default" className="card-lift overflow-hidden p-0 shadow-lg shadow-[#33A1C9]/10">
         <div className="h-28 sm:h-32" style={{ backgroundColor: ACCENT }} aria-hidden />
 
         <div className="relative px-6 pb-2 pt-0 sm:px-10">
@@ -129,6 +134,7 @@ export default function ProfilePage() {
           </Button>
         </div>
       </Surface>
+      </Reveal>
     </main>
   );
 }

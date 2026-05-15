@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button, Input, Label, Surface, TextField } from "@heroui/react";
 import { toast } from "sonner";
+import AuthPageShell from "@/components/AuthPageShell";
 import { authClient } from "../lib/auth-client";
 
 export default function LoginPage() {
@@ -38,12 +39,11 @@ export default function LoginPage() {
     }
   };
   return (
-    <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-md flex-col justify-center px-4 py-12">
-      <h1 className="mb-2 text-2xl font-semibold text-neutral-900">Log in</h1>
-      <p className="mb-6 text-sm text-neutral-600">
-        Enter your email and password to continue.
-      </p>
-      <Surface variant="default" className="p-6">
+    <AuthPageShell
+      title="Log in"
+      subtitle="Enter your email and password to continue."
+    >
+      <Surface variant="default" className="p-6 shadow-lg shadow-[#33A1C9]/10">
         <form onSubmit={handleLogin} className="flex flex-col gap-4" method="post">
           <TextField className="w-full" name="email" type="email">
             <Label>Email</Label>
@@ -76,6 +76,6 @@ export default function LoginPage() {
           </p>
         </form>
       </Surface>
-    </main>
+    </AuthPageShell>
   );
 }

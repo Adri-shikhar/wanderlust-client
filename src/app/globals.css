@@ -1,2 +1,246 @@
 @import "tailwindcss";
-@import "@heroui/styles"; 
+@import "@heroui/styles";
+
+@theme {
+  --color-brand: #33a1c9;
+  --color-brand-dark: #2a8aad;
+  --color-brand-light: #5ebde0;
+}
+
+:root {
+  --brand: #33a1c9;
+  --brand-dark: #2a8aad;
+  --surface: #f8fafc;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.75s var(--ease-out-expo) both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease both;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.55s var(--ease-out-expo) both;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.5s var(--ease-out-expo) both;
+}
+
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+.animate-delay-100 {
+  animation-delay: 100ms;
+}
+.animate-delay-200 {
+  animation-delay: 200ms;
+}
+.animate-delay-300 {
+  animation-delay: 300ms;
+}
+.animate-delay-400 {
+  animation-delay: 400ms;
+}
+.animate-delay-500 {
+  animation-delay: 500ms;
+}
+.animate-delay-600 {
+  animation-delay: 600ms;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity 0.7s var(--ease-out-expo),
+    transform 0.7s var(--ease-out-expo);
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-gradient {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(51, 161, 201, 0.12), transparent),
+    linear-gradient(180deg, #f8fafc 0%, #ffffff 40%, #f8fafc 100%);
+}
+
+.glass-nav {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.card-lift {
+  transition:
+    transform 0.35s var(--ease-out-expo),
+    box-shadow 0.35s var(--ease-out-expo);
+}
+
+.card-lift:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 20px 40px -12px rgba(51, 161, 201, 0.2),
+    0 8px 16px -8px rgba(0, 0, 0, 0.08);
+}
+
+.img-zoom {
+  transition: transform 0.6s var(--ease-out-expo);
+}
+
+.group:hover .img-zoom {
+  transform: scale(1.06);
+}
+
+.btn-brand {
+  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+  transition:
+    transform 0.25s var(--ease-out-expo),
+    box-shadow 0.25s var(--ease-out-expo),
+    opacity 0.2s ease;
+}
+
+.btn-brand:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -8px rgba(51, 161, 201, 0.45);
+}
+
+.btn-brand:active {
+  transform: translateY(0);
+}
+
+.btn-glass {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  transition:
+    transform 0.25s var(--ease-out-expo),
+    background 0.25s ease;
+}
+
+.btn-glass:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateY(-2px);
+}
+
+.section-title {
+  @apply font-semibold tracking-tight text-gray-900;
+}
+
+.link-arrow {
+  @apply inline-flex items-center gap-1 font-semibold text-[#33A1C9] transition-all duration-300;
+}
+
+.link-arrow:hover {
+  @apply gap-2 text-[#2a8aad];
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 0%,
+    #e2e8f0 50%,
+    #f1f5f9 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in-up,
+  .animate-fade-in,
+  .animate-scale-in,
+  .animate-slide-down,
+  .animate-float,
+  .reveal {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .card-lift:hover,
+  .group:hover .img-zoom,
+  .btn-brand:hover,
+  .btn-glass:hover {
+    transform: none;
+  }
+}

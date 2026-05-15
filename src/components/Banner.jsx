@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Separator } from "@heroui/react";
 import bannerBackground from "@/assets/Banner.png";
 
@@ -8,62 +9,70 @@ const Banner = () => {
       style={{ backgroundImage: `url(${bannerBackground.src})` }}
     >
       <div
-        className="pointer-events-none absolute inset-0 bg-black/25"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/50"
         aria-hidden
       />
+
       <div className="relative z-10 flex flex-1 flex-col items-center justify-center gap-3.5 p-10 text-center">
-        <h1 className="text-7xl">
+        <h1 className="animate-fade-in-up text-4xl font-bold leading-tight sm:text-6xl lg:text-7xl">
           Discover Your <br /> Next Adventure
         </h1>
 
-        <p className="text-2xl">
+        <p className="animate-fade-in-up animate-delay-200 max-w-2xl text-lg text-white/90 sm:text-2xl">
           Explore breathtaking destinations and create unforgettable memories
           with our curated travel experiences.
         </p>
 
-        <div className="flex gap-5">
-          <button className="uppercase bg-cyan-500 px-5 py-3 cursor-pointer">
+        <div className="animate-fade-in-up animate-delay-400 mt-2 flex flex-wrap justify-center gap-4">
+          <Link
+            href="/Destinations"
+            className="btn-brand rounded-lg px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white"
+          >
             Explore Now
-          </button>
+          </Link>
 
-          <button className="uppercase px-5 py-3 bg-white/50 cursor-pointer">
-            View Destination
-          </button>
+          <Link
+            href="/Bookings"
+            className="btn-glass rounded-lg px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white"
+          >
+            My Bookings
+          </Link>
         </div>
       </div>
 
-      <div className="relative z-10 flex w-full items-center justify-between gap-5 bg-white/30">
-        <div className="px-3">
-          <h3 className="text-sm">Location</h3>
-          <p className="text-xs">Address, City or Zip</p>
+      <div className="animate-fade-in-up animate-delay-500 relative z-10 hidden w-full items-center justify-between gap-5 bg-white/25 backdrop-blur-md md:flex">
+        <div className="px-6 py-4">
+          <h3 className="text-sm font-semibold">Location</h3>
+          <p className="text-xs text-white/80">Anywhere worldwide</p>
         </div>
 
-         <Separator variant="tertiary" orientation="vertical" />
+        <Separator variant="tertiary" orientation="vertical" />
 
-        <div>
-          <h3 className="text-sm">Date/Duration</h3>
-          <p className="text-xs">Anytime/3 Days</p>
+        <div className="px-4 py-4">
+          <h3 className="text-sm font-semibold">Date / Duration</h3>
+          <p className="text-xs text-white/80">Flexible dates</p>
         </div>
 
-           <Separator variant="tertiary" orientation="vertical" />
+        <Separator variant="tertiary" orientation="vertical" />
 
-        <div>
-          <h3 className="text-sm">Budget</h3>
-          <p className="text-xs">$0-$3000</p>
+        <div className="px-4 py-4">
+          <h3 className="text-sm font-semibold">Budget</h3>
+          <p className="text-xs text-white/80">$500 – $5,000+</p>
         </div>
 
-           <Separator variant="tertiary" orientation="vertical" />
+        <Separator variant="tertiary" orientation="vertical" />
 
-        <div>
-          <h3 className="text-sm">People</h3>
-          <p className="text-xs">5-10</p>
+        <div className="px-4 py-4">
+          <h3 className="text-sm font-semibold">Travelers</h3>
+          <p className="text-xs text-white/80">Solo to groups</p>
         </div>
 
-
-
-        <div className="bg-cyan-500 py-2 px-4">
-          <h3>Search</h3>
-        </div>
+        <Link
+          href="/Destinations"
+          className="btn-brand shrink-0 px-8 py-4 text-sm font-semibold uppercase tracking-wide text-white"
+        >
+          Search
+        </Link>
       </div>
     </div>
   );

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Button, Input, Label, Surface, TextField } from "@heroui/react";
+import AuthPageShell from "@/components/AuthPageShell";
 import { authClient } from "../lib/auth-client";
 
 export default function SignupPage() {
@@ -29,14 +30,8 @@ console.log(name, phone, photoUrl, email, password);
     }
   };
   return (
-    <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col justify-center px-4 py-12">
-      <h1 className="mb-2 text-2xl font-semibold text-neutral-900">
-        Create account
-      </h1>
-      <p className="mb-6 text-sm text-neutral-600">
-        Fill in the fields below.
-      </p>
-      <Surface variant="default" className="p-6">
+    <AuthPageShell title="Create account" subtitle="Fill in the fields below.">
+      <Surface variant="default" className="mx-auto max-w-lg p-6 shadow-lg shadow-[#33A1C9]/10">
         <form onSubmit={handleSignup} className="flex flex-col gap-4" method="post">
           <TextField className="w-full" name="name" type="text">
             <Label>Name</Label>
@@ -78,6 +73,6 @@ console.log(name, phone, photoUrl, email, password);
           </p>
         </form>
       </Surface>
-    </main>
+    </AuthPageShell>
   );
 }

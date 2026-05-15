@@ -92,8 +92,7 @@ export default function DestinationBookingActions({
       </div>
 
       <button
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-        style={{ backgroundColor: accent }}
+        className="btn-brand mt-6 flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-semibold text-white"
         onClick={() => handleBooking(booking_data)}
       >
         Confirm Booking

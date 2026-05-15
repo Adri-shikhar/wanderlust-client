@@ -4,9 +4,9 @@ import "@/app/globals.css";
 
 export default function MainLayout({ children }) {
   return (
-    <div>
+    <div className="page-gradient flex min-h-screen flex-col">
       <Navbar />
-      {children}
+      <div className="flex-1">{children}</div>
     </div>
   );
 }

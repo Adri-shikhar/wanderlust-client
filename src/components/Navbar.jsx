@@ -36,7 +36,7 @@ export default function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white shadow-sm">
+    <header className="glass-nav animate-slide-down sticky top-0 z-50 w-full border-b border-gray-100/80 shadow-sm">
       <nav className="mx-auto flex h-16 max-w-7xl items-center gap-2 px-4 sm:gap-4 sm:px-10 lg:px-12">
         <div
           className="flex min-w-0 flex-1 items-center gap-4 overflow-x-auto lg:gap-10 [&::-webkit-scrollbar]:hidden"
@@ -49,10 +49,10 @@ export default function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`shrink-0 text-sm font-medium transition-colors ${
+                className={`shrink-0 text-sm font-medium transition-all duration-300 ${
                   active
                     ? "border-b-2 pb-0.5 text-[#33A1C9]"
-                    : "text-neutral-900 hover:text-neutral-600"
+                    : "text-neutral-900 hover:text-[#33A1C9]"
                 }`}
                 style={active ? { borderColor: accent } : undefined}
               >
@@ -77,7 +77,7 @@ export default function Navbar() {
 
         <div className="flex min-w-0 flex-1 flex-wrap items-center justify-end gap-2 sm:gap-3 lg:gap-6">
           {isPending ? (
-            <div className="h-9 w-32 rounded-lg bg-neutral-200" aria-hidden />
+            <div className="skeleton-shimmer h-9 w-32 rounded-lg" aria-hidden />
           ) : user ? (
             <>
               <div className="flex max-w-full min-w-0 items-center gap-2">
