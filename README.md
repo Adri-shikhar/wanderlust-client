@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Wanderlust Client
 
-## Getting Started
+Next.js frontend for Wanderlust — browse destinations, book trips, and manage reservations. Uses Better Auth (email/password and Google) and talks to the [Wanderlust API](../wanderlust-server/) for destinations and bookings.
 
-First, run the development server:
+## Live link https://wanderlust-client-4ghv-git-main-obito4.vercel.app
+
+
+
+## Features
+
+- Browse and view destination details
+- Book trips with departure date selection
+- **My Bookings** — view and delete your reservations
+- Sign in with email/password or Google
+- Admin panel to add destinations
+
+## Tech stack
+
+- Next.js 16
+- React 19
+- Tailwind CSS 4
+- Better Auth + MongoDB adapter
+- Hero UI
+
+## Prerequisites
+
+- Node.js 18+
+- MongoDB Atlas (auth sessions and users)
+- Google OAuth credentials (optional, for Google sign-in)
+- Wanderlust API running (see `../wanderlust-server/`) — default `http://localhost:8000`
+
+## Setup
+
+```bash
+npm install
+cp .env.example .env
+```
+
+Fill in `.env`:
+
+```env
+MONGODB_URI=
+BETTER_AUTH_SECRET=
+BETTER_AUTH_URL=http://localhost:3000
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+NEXT_PUBLIC_WANDERLUST_API_URL=http://localhost:8000
+```
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Description |
+| ------- | ----------- |
+| `npm run dev` | Start development server |
+| `npm run build` | Production build |
+| `npm run start` | Run production build |
+| `npm run lint` | Run ESLint |
 
-## Learn More
+## Environment variables
 
-To learn more about Next.js, take a look at the following resources:
+| Variable | Description |
+| -------- | ----------- |
+| `MONGODB_URI` | MongoDB connection string (Better Auth) |
+| `BETTER_AUTH_SECRET` | Secret for session signing |
+| `BETTER_AUTH_URL` | Public URL of this app (`http://localhost:3000` locally, or your Vercel URL) |
+| `GOOGLE_CLIENT_ID` | Google OAuth client ID |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret |
+| `NEXT_PUBLIC_WANDERLUST_API_URL` | Base URL of the Wanderlust REST API |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Vercel
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Set the same variables in the Vercel project settings. For production:
 
-## Deploy on Vercel
+- `BETTER_AUTH_URL` → `https://wanderlust-client-4ghv-git-main-obito4.vercel.app`
+- `NEXT_PUBLIC_WANDERLUST_API_URL` → your deployed API URL (not `localhost`)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Google OAuth
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+In [Google Cloud Console](https://console.cloud.google.com/) → Credentials → your OAuth client, add:
+
+**Authorized JavaScript origins**
+
+```
+https://wanderlust-client-4ghv-git-main-obito4.vercel.app
+http://localhost:3000
+```
+
+**Authorized redirect URIs**
+
+```
+https://wanderlust-client-4ghv-git-main-obito4.vercel.app/api/auth/callback/google
+http://localhost:3000/api/auth/callback/google
+```
+
+`BETTER_AUTH_URL` must match the origin used in redirect URIs.
+
+## Project layout
+
+```
+src/
+├── app/
+│   ├── (main)/          # Pages: Destinations, Bookings, Login, Admin, …
+│   │   └── lib/         # data.js, auth.js, auth-client.js
+│   └── api/auth/        # Better Auth route handler
+└── components/          # Navbar, booking UI, etc.
+```
+
+## Related
+
+- API server: [`../wanderlust-server/`](../wanderlust-server/)
