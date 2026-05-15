@@ -11,12 +11,14 @@ import {
   Button,
 } from "@heroui/react";
 import { FiTrash2, FiSave } from "react-icons/fi";
+import { toast } from "sonner";
+import { addDestination } from "../lib/data";
 
 const fieldShell =
   "mt-1.5 w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2.5 text-gray-900 shadow-sm outline-none transition-colors focus:border-teal-500 focus:ring-1 focus:ring-teal-500";
 
 export default function Admin() {
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const destinationName = formData.get("destinationName");
@@ -28,7 +30,16 @@ export default function Admin() {
     const imageUrl = formData.get("imageUrl");
     const description = formData.get("description");
     const data = { destinationName, country, category, price, duration, departureDate, imageUrl, description };
-   console.log(data);
+    try {
+      const response = await addDestination(data);
+      if (response?.acknowledged) {
+        toast.success("Destination added successfully");
+      } else {
+        toast.error("Failed to add destination");
+      }
+    } catch {
+      toast.error("Failed to add destination");
+    }
   };
   return (
     <div className="min-h-screen bg-white px-4 py-10 sm:px-6 lg:px-8">

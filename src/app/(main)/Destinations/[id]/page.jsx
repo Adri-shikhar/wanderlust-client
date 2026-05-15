@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import DestinationBookingActions from "@/components/DestinationBookingActions";
 import { fetchDestinationById } from "../../lib/data";
+import Delete_button from "@/components/Delete_button";
 
 const accent = "#33A1C9";
 
@@ -83,6 +84,7 @@ export default async function DestinationPage({ params }) {
             <span aria-hidden>←</span>
             Back to Destinations
           </Link>
+         <Delete_button destinationId={bookingId} />
         </div>
       </div>
 

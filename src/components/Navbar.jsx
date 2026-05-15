@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import wanderlastLogo from "@/assets/Wanderlast.png";
+import { authClient } from "@/app/(main)/lib/auth-client";
 
 const navLeft = [
   { href: "/", label: "Home" },
@@ -34,10 +35,10 @@ function NavLink({ href, label, active }) {
   );
 }
 
-
-
 export default function Navbar() {
   const pathname = usePathname();
+  const { data: session, isPending } = authClient.useSession();
+  const displayName = session?.user?.name || session?.user?.email;
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white shadow-sm">
@@ -66,25 +67,45 @@ export default function Navbar() {
           </Link>
         </div>
 
-        <div className="flex items-center justify-end gap-8 lg:gap-10">
+        <div className="flex items-center justify-end gap-4 sm:gap-8 lg:gap-10">
           <Link
-            href="/profile"
-            className="flex items-center gap-2 text-sm font-medium text-neutral-900 hover:text-neutral-600"
+            href="/Profile"
+            className="text-sm font-medium text-neutral-900 hover:text-neutral-600"
           >
             Profile
           </Link>
-          <Link
-            href="/login"
-            className="text-sm font-medium text-neutral-900 hover:text-neutral-600"
-          >
-            Login
-          </Link>
-          <Link
-            href="/signup"
-            className="text-sm font-medium text-neutral-900 hover:text-neutral-600"
-          >
-            Sign Up
-          </Link>
+          {!isPending && displayName ? (
+            <>
+              <span
+                className="hidden max-w-40 truncate text-sm text-neutral-600 sm:inline"
+                title={displayName}
+              >
+                {displayName}
+              </span>
+              <button
+                type="button"
+                className="text-sm font-medium text-neutral-900 hover:text-neutral-600"
+                onClick={() => authClient.signOut()}
+              >
+                Sign out
+              </button>
+            </>
+          ) : !isPending ? (
+            <>
+              <Link
+                href="/Login"
+                className="text-sm font-medium text-neutral-900 hover:text-neutral-600"
+              >
+                Login
+              </Link>
+              <Link
+                href="/Signup"
+                className="text-sm font-medium text-neutral-900 hover:text-neutral-600"
+              >
+                Sign Up
+              </Link>
+            </>
+          ) : null}
         </div>
       </nav>
     </header>

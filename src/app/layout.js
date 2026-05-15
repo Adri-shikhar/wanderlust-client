@@ -1,7 +1,13 @@
+const dns = require("node:dns");
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
+
+
 import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import "@/app/globals.css";
 import Footer from "@/components/Footer";
+import ReactToastifyContainer from "@/components/ReactToastifyContainer";
+import { Toaster } from "sonner";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -27,6 +33,8 @@ export default function RootLayout({ children }) {
        
         {children}
         <Footer />
+        <Toaster richColors position="top-center" />
+        <ReactToastifyContainer />
       </body>
     </html>
   );
