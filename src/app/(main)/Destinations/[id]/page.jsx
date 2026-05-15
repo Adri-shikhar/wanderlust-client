@@ -59,15 +59,31 @@ export default async function DestinationPage({ params }) {
     reviews,
     category,
   } = destination;
+  const data = {
+    destinationName,
+    name,
+    country,
+    price,
+    rating,
+    duration,
+    imageUrl,
+    description,
+    departureDate,
+    highlights,
+    reviewCount,
+    reviews,
+    category,
+  };
 
   const title = destinationName ?? name ?? "Destination";
   const image = imageUrl ?? fallbackImage;
   const overview =
     description ??
     "Discover unforgettable scenery, local culture, and curated experiences on this journey.";
-  const highlightList = Array.isArray(highlights) && highlights.length > 0
-    ? highlights
-    : defaultHighlights;
+  const highlightList =
+    Array.isArray(highlights) && highlights.length > 0
+      ? highlights
+      : defaultHighlights;
   const reviewTotal = reviewCount ?? reviews ?? null;
   const ratingNum = Number(rating);
   const priceNum = Number(price) || 0;
@@ -84,7 +100,7 @@ export default async function DestinationPage({ params }) {
             <span aria-hidden>←</span>
             Back to Destinations
           </Link>
-         <Delete_button destinationId={bookingId} />
+          <Delete_button destinationId={bookingId} />
         </div>
       </div>
 
@@ -197,12 +213,16 @@ export default async function DestinationPage({ params }) {
           <aside className="lg:col-span-1">
             <div className="sticky top-24 rounded-xl border border-gray-100 bg-white p-6 shadow-lg shadow-gray-200/50">
               <p className="text-sm text-gray-500">Starting from</p>
-              <p className="mt-1 font-serif text-4xl font-bold" style={{ color: accent }}>
+              <p
+                className="mt-1 font-serif text-4xl font-bold"
+                style={{ color: accent }}
+              >
                 ${priceNum.toLocaleString()}
               </p>
               <p className="text-sm text-gray-500">per person</p>
 
               <DestinationBookingActions
+                data={data}
                 bookingId={bookingId}
                 departureDate={departureDate}
                 accent={accent}

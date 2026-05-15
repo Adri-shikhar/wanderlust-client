@@ -6,6 +6,8 @@ const client = new MongoClient(process.env.MONGODB_URI);
 const db = client.db("Wanderlust");
 
 export const auth = betterAuth({
+  /** Full site origin (OAuth redirect). See https://www.better-auth.com/docs/authentication/google */
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
   database: mongodbAdapter(db, {
     // Optional: if you don't provide a client, database transactions won't be enabled.
     client
@@ -15,7 +17,11 @@ export const auth = betterAuth({
   },
   socialProviders: {
     google: {
-      enabled: true,
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      /** Only add fields here so we never overwrite `image` with `undefined` (would clear Google photo). */
+      mapProfileToUser: (profile) =>
+        profile.picture ? { image: String(profile.picture) } : {},
     },
   },
 });

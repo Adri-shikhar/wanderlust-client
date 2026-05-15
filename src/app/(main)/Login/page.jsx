@@ -3,10 +3,21 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button, Input, Label, Surface, TextField } from "@heroui/react";
+import { toast } from "sonner";
 import { authClient } from "../lib/auth-client";
 
 export default function LoginPage() {
   const router = useRouter();
+
+  async function signInWithGoogle() {
+    const { error } = await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/",
+    });
+    if (error) {
+      toast.error(error.message || "Google sign-in failed.");
+    }
+  }
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -22,7 +33,7 @@ export default function LoginPage() {
       return;
     }
     if (data) {
-      router.push("/Profile");
+      router.push("/");
       router.refresh();
     }
   };
@@ -47,6 +58,12 @@ export default function LoginPage() {
           </TextField>
           <Button type="submit" className="w-full">
             Log in
+          </Button>
+          <div className="relative py-2 text-center text-xs text-neutral-500 before:absolute before:inset-x-0 before:top-1/2 before:z-0 before:h-px before:bg-neutral-200">
+            <span className="relative z-10 bg-white px-2">or</span>
+          </div>
+          <Button type="button" variant="secondary" className="w-full" onPress={signInWithGoogle}>
+            Continue with Google
           </Button>
           <p className="text-center text-sm text-neutral-600">
             No account?{" "}

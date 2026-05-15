@@ -2,8 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { Button } from "@heroui/react";
+import { toast } from "sonner";
 import wanderlastLogo from "@/assets/Wanderlast.png";
+import UserAvatar from "@/components/UserAvatar";
 import { authClient } from "@/app/(main)/lib/auth-client";
 
 const navLeft = [
@@ -15,46 +18,51 @@ const navLeft = [
 
 const accent = "#33A1C9";
 
-function NavLink({ href, label, active }) {
-  return (
-    <Link
-      href={href}
-      className={`text-sm font-medium transition-colors ${
-        active
-          ? "border-b-2 pb-0.5"
-          : "text-neutral-900 hover:text-neutral-600"
-      }`}
-      style={
-        active
-          ? { color: accent, borderColor: accent }
-          : undefined
-      }
-    >
-      {label}
-    </Link>
-  );
-}
-
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
-  const displayName = session?.user?.name || session?.user?.email;
+  const user = session?.user;
+  const displayName = user?.name || user?.email;
+
+  async function logOut() {
+    try {
+      await authClient.signOut();
+      router.push("/");
+      router.refresh();
+    } catch (err) {
+      toast.error(err?.message || "Could not sign out. Try again.");
+    }
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white shadow-sm">
-      <nav className="mx-auto grid h-16 max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-6 sm:px-10 lg:px-12">
-        <div className="flex items-center gap-8 lg:gap-10">
-          {navLeft.map(({ href, label }) => (
-            <NavLink
-              key={href}
-              href={href}
-              label={label}
-              active={href === "/" ? pathname === "/" : pathname.startsWith(href)}
-            />
-          ))}
+      <nav className="mx-auto flex h-16 max-w-7xl items-center gap-2 px-4 sm:gap-4 sm:px-10 lg:px-12">
+        <div
+          className="flex min-w-0 flex-1 items-center gap-4 overflow-x-auto lg:gap-10 [&::-webkit-scrollbar]:hidden"
+          style={{ scrollbarWidth: "none" }}
+        >
+          {navLeft.map((item) => {
+            const active =
+              item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`shrink-0 text-sm font-medium transition-colors ${
+                  active
+                    ? "border-b-2 pb-0.5 text-[#33A1C9]"
+                    : "text-neutral-900 hover:text-neutral-600"
+                }`}
+                style={active ? { borderColor: accent } : undefined}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </div>
 
-        <div className="flex justify-center px-4">
+        <div className="flex shrink-0 justify-center px-2 sm:px-4">
           <Link href="/" className="flex items-center" aria-label="Wanderlast home">
             <Image
               src={wanderlastLogo}
@@ -67,45 +75,52 @@ export default function Navbar() {
           </Link>
         </div>
 
-        <div className="flex items-center justify-end gap-4 sm:gap-8 lg:gap-10">
-          <Link
-            href="/Profile"
-            className="text-sm font-medium text-neutral-900 hover:text-neutral-600"
-          >
-            Profile
-          </Link>
-          {!isPending && displayName ? (
+        <div className="flex min-w-0 flex-1 flex-wrap items-center justify-end gap-2 sm:gap-3 lg:gap-6">
+          {isPending ? (
+            <div className="h-9 w-32 rounded-lg bg-neutral-200" aria-hidden />
+          ) : user ? (
             <>
-              <span
-                className="hidden max-w-40 truncate text-sm text-neutral-600 sm:inline"
-                title={displayName}
+              <div className="flex max-w-full min-w-0 items-center gap-2">
+                <UserAvatar user={user} size="sm" className="size-8 shrink-0 text-xs" />
+                <span
+                  className="hidden max-w-36 truncate text-sm text-neutral-700 sm:inline"
+                  title={displayName}
+                >
+                  {displayName}
+                </span>
+              </div>
+              <Link
+                href="/Profile"
+                className="shrink-0 text-sm font-medium text-neutral-900 hover:text-neutral-600"
               >
-                {displayName}
-              </span>
-              <button
-                type="button"
-                className="text-sm font-medium text-neutral-900 hover:text-neutral-600"
-                onClick={() => authClient.signOut()}
-              >
-                Sign out
-              </button>
+                Profile
+              </Link>
+              <Button type="button" variant="danger" size="sm" className="shrink-0" onPress={logOut}>
+                Log out
+              </Button>
             </>
-          ) : !isPending ? (
+          ) : (
             <>
               <Link
+                href="/Profile"
+                className="shrink-0 text-sm font-medium text-neutral-900 hover:text-neutral-600"
+              >
+                Profile
+              </Link>
+              <Link
                 href="/Login"
-                className="text-sm font-medium text-neutral-900 hover:text-neutral-600"
+                className="shrink-0 text-sm font-medium text-neutral-900 hover:text-neutral-600"
               >
                 Login
               </Link>
               <Link
                 href="/Signup"
-                className="text-sm font-medium text-neutral-900 hover:text-neutral-600"
+                className="shrink-0 text-sm font-medium text-neutral-900 hover:text-neutral-600"
               >
                 Sign Up
               </Link>
             </>
-          ) : null}
+          )}
         </div>
       </nav>
     </header>
