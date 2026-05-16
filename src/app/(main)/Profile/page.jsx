@@ -43,25 +43,11 @@ function InfoRow({ icon: Icon, label, value }) {
   );
 }
 
-function LogoutOverlay() {
-  return (
-    <div
-      className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-4 bg-white/90 backdrop-blur-md"
-      role="status"
-      aria-live="polite"
-      aria-busy="true"
-    >
-      <Spinner color="accent" size="lg" />
-      <p className="text-sm font-medium text-neutral-700">Signing out…</p>
-    </div>
-  );
-}
-
 export default function ProfilePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const adminDeniedToast = useRef(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { logOut, isLoggingOut } = useLogout();
   const { data, isPending, error } = authClient.useSession();
 
   useEffect(() => {
@@ -71,35 +57,6 @@ export default function ProfilePage() {
     toast.error("This area is for admins only.");
     router.replace("/Profile", { scroll: false });
   }, [router, searchParams]);
-
-  async function logOut() {
-    if (isLoggingOut) return;
-    setIsLoggingOut(true);
-    const started = Date.now();
-    try {
-      await authClient.signOut();
-      const remaining = LOGOUT_MS - (Date.now() - started);
-      if (remaining > 0) {
-        await new Promise((resolve) => setTimeout(resolve, remaining));
-      }
-      router.push("/");
-      router.refresh();
-    } catch (err) {
-      setIsLoggingOut(false);
-      toast.error(err?.message || "Could not sign out. Try again.");
-    }
-  }
-
-  if (isLoggingOut) {
-    return (
-      <>
-        <LogoutOverlay />
-        <ProfileShell className="opacity-0 pointer-events-none" aria-hidden>
-          <div className="h-64" />
-        </ProfileShell>
-      </>
-    );
-  }
 
   if (isPending) {
     return (

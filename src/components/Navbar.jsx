@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Button } from "@heroui/react";
 import wanderlastLogo from "@/assets/Wanderlast.png";
 import LogoutOverlay from "@/components/LogoutOverlay";
@@ -21,7 +21,6 @@ const accent = "#33A1C9";
 
 export default function Navbar() {
   const pathname = usePathname();
-  const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
   const { logOut, isLoggingOut } = useLogout();
   const user = session?.user;
