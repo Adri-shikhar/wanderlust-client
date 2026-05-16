@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button, Spinner, Surface } from "@heroui/react";
 import { toast } from "sonner";
 import Reveal from "@/components/motion/Reveal";
@@ -12,7 +13,17 @@ const ACCENT = "#33A1C9";
 
 export default function ProfilePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const adminDeniedToast = useRef(false);
   const { data, isPending, error } = authClient.useSession();
+
+  useEffect(() => {
+    if (adminDeniedToast.current) return;
+    if (searchParams.get("adminOnly") !== "1") return;
+    adminDeniedToast.current = true;
+    toast.error("This area is for admins only.");
+    router.replace("/Profile", { scroll: false });
+  }, [router, searchParams]);
 
   async function logOut() {
     try {
