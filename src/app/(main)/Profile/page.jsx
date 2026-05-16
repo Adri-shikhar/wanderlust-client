@@ -1,17 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button, Spinner } from "@heroui/react";
 import { toast } from "sonner";
 import { FiBook, FiHome, FiLogOut, FiMail } from "react-icons/fi";
 import Reveal from "@/components/motion/Reveal";
+import LogoutOverlay from "@/components/LogoutOverlay";
 import UserAvatar from "@/components/UserAvatar";
 import { authClient } from "../lib/auth-client";
+import { useLogout } from "../lib/use-logout";
 
 const ACCENT = "#33A1C9";
-const LOGOUT_MS = 1500;
 
 function ProfileShell({ children, className = "" }) {
   return (
@@ -167,6 +168,7 @@ export default function ProfilePage() {
 
   return (
     <ProfileShell>
+      {isLoggingOut ? <LogoutOverlay /> : null}
       <Reveal>
         <header className="mb-8 text-center sm:text-left">
           <p className="text-xs font-semibold uppercase tracking-[0.2em]" style={{ color: ACCENT }}>

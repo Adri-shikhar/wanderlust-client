@@ -4,10 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@heroui/react";
-import { toast } from "sonner";
 import wanderlastLogo from "@/assets/Wanderlast.png";
+import LogoutOverlay from "@/components/LogoutOverlay";
 import UserAvatar from "@/components/UserAvatar";
 import { authClient } from "@/app/(main)/lib/auth-client";
+import { useLogout } from "@/app/(main)/lib/use-logout";
 
 const navLeft = [
   { href: "/", label: "Home" },
@@ -22,20 +23,13 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
+  const { logOut, isLoggingOut } = useLogout();
   const user = session?.user;
   const displayName = user?.name || user?.email;
 
-  async function logOut() {
-    try {
-      await authClient.signOut();
-      router.push("/");
-      router.refresh();
-    } catch (err) {
-      toast.error(err?.message || "Could not sign out. Try again.");
-    }
-  }
-
   return (
+    <>
+      {isLoggingOut ? <LogoutOverlay /> : null}
     <header className="glass-nav animate-slide-down sticky top-0 z-50 w-full border-b border-gray-100/80 shadow-sm">
       <nav className="mx-auto flex h-16 max-w-7xl items-center gap-2 px-4 sm:gap-4 sm:px-10 lg:px-12">
         <div
@@ -95,7 +89,14 @@ export default function Navbar() {
               >
                 Profile
               </Link>
-              <Button type="button" variant="danger" size="sm" className="shrink-0" onPress={logOut}>
+              <Button
+                type="button"
+                variant="danger"
+                size="sm"
+                className="shrink-0"
+                onPress={logOut}
+                isDisabled={isLoggingOut}
+              >
                 Log out
               </Button>
             </>
@@ -124,5 +125,6 @@ export default function Navbar() {
         </div>
       </nav>
     </header>
+    </>
   );
 }
