@@ -1,13 +1,18 @@
 import { betterAuth } from "better-auth";
 import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
+import { getServerAuthBaseURL } from "./auth-url";
 
 const client = new MongoClient(process.env.MONGODB_URI);
 const db = client.db("Wanderlust");
 
 export const auth = betterAuth({
   /** Full site origin (OAuth redirect). See https://www.better-auth.com/docs/authentication/google */
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  baseURL: getServerAuthBaseURL(),
+  trustedOrigins: [
+    "http://localhost:3000",
+    "https://*.vercel.app",
+  ],
   database: mongodbAdapter(db, {
     // Optional: if you don't provide a client, database transactions won't be enabled.
     client
