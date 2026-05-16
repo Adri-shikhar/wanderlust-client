@@ -1,20 +1,66 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Button, Spinner, Surface } from "@heroui/react";
+import { Button, Spinner } from "@heroui/react";
 import { toast } from "sonner";
+import { FiBook, FiHome, FiLogOut, FiMail } from "react-icons/fi";
 import Reveal from "@/components/motion/Reveal";
 import UserAvatar from "@/components/UserAvatar";
 import { authClient } from "../lib/auth-client";
 
 const ACCENT = "#33A1C9";
+const LOGOUT_MS = 1500;
+
+function ProfileShell({ children, className = "" }) {
+  return (
+    <main
+      className={`mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-lg flex-col px-4 py-10 sm:py-14 ${className}`}
+    >
+      {children}
+    </main>
+  );
+}
+
+function InfoRow({ icon: Icon, label, value }) {
+  return (
+    <div
+      className="flex items-start gap-4 rounded-xl border border-neutral-100 bg-neutral-50/60 px-4 py-3.5"
+    >
+      <span
+        className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg text-white"
+        style={{ backgroundColor: ACCENT }}
+      >
+        <Icon className="size-4" aria-hidden />
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">{label}</p>
+        <p className="mt-0.5 break-all text-sm font-medium text-neutral-900">{value}</p>
+      </div>
+    </div>
+  );
+}
+
+function LogoutOverlay() {
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-4 bg-white/90 backdrop-blur-md"
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+    >
+      <Spinner color="accent" size="lg" />
+      <p className="text-sm font-medium text-neutral-700">Signing out…</p>
+    </div>
+  );
+}
 
 export default function ProfilePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const adminDeniedToast = useRef(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { data, isPending, error } = authClient.useSession();
 
   useEffect(() => {
@@ -26,57 +72,91 @@ export default function ProfilePage() {
   }, [router, searchParams]);
 
   async function logOut() {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    const started = Date.now();
     try {
       await authClient.signOut();
+      const remaining = LOGOUT_MS - (Date.now() - started);
+      if (remaining > 0) {
+        await new Promise((resolve) => setTimeout(resolve, remaining));
+      }
       router.push("/");
       router.refresh();
     } catch (err) {
+      setIsLoggingOut(false);
       toast.error(err?.message || "Could not sign out. Try again.");
     }
   }
 
+  if (isLoggingOut) {
+    return (
+      <>
+        <LogoutOverlay />
+        <ProfileShell className="opacity-0 pointer-events-none" aria-hidden>
+          <div className="h-64" />
+        </ProfileShell>
+      </>
+    );
+  }
+
   if (isPending) {
     return (
-      <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-2xl flex-col justify-center px-4 py-12">
-        <Surface variant="default" className="flex flex-col items-center gap-4 p-12">
+      <ProfileShell className="justify-center">
+        <div className="flex flex-col items-center gap-4 text-center">
           <Spinner color="accent" size="lg" />
-          <p className="text-sm text-neutral-600">Loading your profile…</p>
-        </Surface>
-      </main>
+          <p className="text-sm text-neutral-500">Loading profile…</p>
+        </div>
+      </ProfileShell>
     );
   }
 
   if (error) {
     return (
-      <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-2xl flex-col justify-center px-4 py-12">
-        <Surface variant="default" className="p-6">
-          <h1 className="mb-2 text-2xl font-semibold text-neutral-900">Profile</h1>
-          <p className="text-sm text-red-600">{error.message || "Could not load session."}</p>
-        </Surface>
-      </main>
+      <ProfileShell className="justify-center">
+        <div className="rounded-2xl border border-red-100 bg-red-50/50 p-6 text-center">
+          <h1 className="text-lg font-semibold text-neutral-900">Something went wrong</h1>
+          <p className="mt-2 text-sm text-red-600">
+            {error.message || "Could not load your session."}
+          </p>
+        </div>
+      </ProfileShell>
     );
   }
 
   if (!data?.user) {
     return (
-      <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-2xl flex-col justify-center px-4 py-12">
-        <h1 className="mb-2 text-2xl font-semibold text-neutral-900">Your profile</h1>
-        <p className="mb-6 text-sm text-neutral-600">
-          Sign in to view your account details and manage your session.
-        </p>
-        <Surface variant="default" className="space-y-4 p-6">
-          <p className="text-center text-sm text-neutral-600">You are not signed in.</p>
-          <Button type="button" className="w-full" onPress={() => router.push("/Login")}>
-            Log in
-          </Button>
-          <p className="text-center text-sm text-neutral-600">
-            No account?{" "}
-            <Link href="/Signup" className="font-medium hover:underline" style={{ color: ACCENT }}>
-              Sign up
-            </Link>
-          </p>
-        </Surface>
-      </main>
+      <ProfileShell className="justify-center">
+        <Reveal>
+          <div className="text-center">
+            <p
+              className="text-xs font-semibold uppercase tracking-[0.2em]"
+              style={{ color: ACCENT }}
+            >
+              Wanderlast
+            </p>
+            <h1 className="mt-3 text-2xl font-semibold tracking-tight text-neutral-900">
+              Your profile
+            </h1>
+            <p className="mt-2 text-sm text-neutral-500">
+              Sign in to view account details and manage your trip.
+            </p>
+          </div>
+        </Reveal>
+        <Reveal delay={80}>
+          <div className="mt-8 rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
+            <Button type="button" className="w-full" onPress={() => router.push("/Login")}>
+              Log in
+            </Button>
+            <p className="mt-4 text-center text-sm text-neutral-500">
+              New here?{" "}
+              <Link href="/Signup" className="font-medium hover:underline" style={{ color: ACCENT }}>
+                Create account
+              </Link>
+            </p>
+          </div>
+        </Reveal>
+      </ProfileShell>
     );
   }
 
@@ -86,66 +166,78 @@ export default function ProfilePage() {
   const hasPhoto = Boolean(user.image || user.picture);
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-10 sm:py-14">
+    <ProfileShell>
       <Reveal>
-        <div className="mb-8">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#33A1C9]">Account</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-neutral-900">Profile</h1>
-          <p className="mt-1 text-sm text-neutral-600">Your Wanderlast account</p>
-        </div>
+        <header className="mb-8 text-center sm:text-left">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em]" style={{ color: ACCENT }}>
+            Account
+          </p>
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-neutral-900 sm:text-3xl">
+            Profile
+          </h1>
+          <p className="mt-1 text-sm text-neutral-500">Manage your Wanderlast account</p>
+        </header>
       </Reveal>
 
-      <Reveal delay={100}>
-      <Surface variant="default" className="card-lift overflow-hidden p-0 shadow-lg shadow-[#33A1C9]/10">
-        <div className="h-28 sm:h-32" style={{ backgroundColor: ACCENT }} aria-hidden />
-
-        <div className="relative px-6 pb-2 pt-0 sm:px-10">
-            <div className="-mt-16 flex flex-col items-center gap-4 sm:-mt-18 sm:flex-row sm:items-end sm:gap-6">
+      <Reveal delay={60}>
+        <section className="overflow-hidden rounded-2xl border border-neutral-200/80 bg-white shadow-sm">
+          <div className="flex flex-col items-center px-6 pb-2 pt-8 text-center sm:flex-row sm:items-center sm:gap-6 sm:px-8 sm:pt-8 sm:text-left">
             <UserAvatar
               user={user}
               size="lg"
-              className="size-28 shrink-0 text-2xl ring-4 ring-white shadow-lg sm:size-32"
+              className="size-24 shrink-0 text-xl ring-2 ring-[#33A1C9]/20 sm:size-28"
             />
-            <div className="min-w-0 flex-1 pb-1 text-center sm:pb-3 sm:text-left">
-              <p className="truncate text-xl font-semibold text-neutral-900 sm:text-2xl">{name}</p>
-              <p className="mt-0.5 truncate text-sm text-neutral-600">{email}</p>
-              {hasPhoto ? (
-                <p className="mt-2 inline-block rounded-full bg-neutral-100 px-3 py-0.5 text-xs font-medium text-neutral-600">
-                  Photo from your account
-                </p>
-              ) : (
-                <p className="mt-2 inline-block rounded-full bg-amber-50 px-3 py-0.5 text-xs font-medium text-amber-800">
-                  Add a photo by signing in with Google, or we show your initials
-                </p>
-              )}
+            <div className="mt-4 min-w-0 sm:mt-0">
+              <h2 className="truncate text-xl font-semibold text-neutral-900">{name}</h2>
+              <p className="mt-0.5 truncate text-sm text-neutral-500">{email}</p>
+              <span
+                className={`mt-3 inline-block rounded-full px-3 py-1 text-xs font-medium ${
+                  hasPhoto
+                    ? "bg-emerald-50 text-emerald-700"
+                    : "bg-neutral-100 text-neutral-600"
+                }`}
+              >
+                {hasPhoto ? "Google photo linked" : "Initials avatar"}
+              </span>
             </div>
           </div>
-        </div>
 
-        <div className="grid gap-4 px-6 py-8 sm:grid-cols-2 sm:gap-6 sm:px-10">
-          <div className="rounded-xl border border-neutral-200 bg-neutral-50/80 p-5">
-            <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Email</p>
-            <p className="mt-2 break-all text-sm font-medium text-neutral-900">{email}</p>
+          <div className="mt-6 space-y-3 px-6 pb-6 sm:px-8">
+            <InfoRow icon={FiMail} label="Email" value={email} />
           </div>
-          <div className="rounded-xl border border-neutral-200 bg-neutral-50/80 p-5">
-            <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Security</p>
-            <p className="mt-2 text-sm leading-relaxed text-neutral-600">
-              Your password is never sent to the browser in full. Use password reset when you add
-              that flow.
-            </p>
-          </div>
-        </div>
 
-        <div className="flex flex-col gap-3 border-t border-neutral-200 bg-neutral-50 px-6 py-6 sm:flex-row sm:px-10">
-          <Button type="button" variant="tertiary" className="w-full sm:w-auto" onPress={() => router.push("/")}>
-            Home
-          </Button>
-          <Button type="button" variant="danger" className="w-full sm:ml-auto sm:w-auto sm:min-w-40" onPress={logOut}>
-            Log out
-          </Button>
-        </div>
-      </Surface>
+          <div className="flex flex-col gap-2 border-t border-neutral-100 bg-neutral-50/80 p-4 sm:flex-row sm:p-5">
+            <Button
+              type="button"
+              variant="tertiary"
+              className="w-full justify-center gap-2 sm:flex-1"
+              onPress={() => router.push("/")}
+            >
+              <FiHome className="size-4" aria-hidden />
+              Home
+            </Button>
+            <Button
+              type="button"
+              variant="tertiary"
+              className="w-full justify-center gap-2 sm:flex-1"
+              onPress={() => router.push("/Bookings")}
+            >
+              <FiBook className="size-4" aria-hidden />
+              My bookings
+            </Button>
+            <Button
+              type="button"
+              variant="danger"
+              className="w-full justify-center gap-2 sm:flex-1"
+              onPress={logOut}
+              isDisabled={isLoggingOut}
+            >
+              <FiLogOut className="size-4" aria-hidden />
+              Log out
+            </Button>
+          </div>
+        </section>
       </Reveal>
-    </main>
+    </ProfileShell>
   );
 }
