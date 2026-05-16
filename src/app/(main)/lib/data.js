@@ -13,11 +13,17 @@ export const fetchDestinations = async () => {
   }
 };
 
-export const fetchDestinationById = async (id) => {
-  const response = await fetch(`${API_BASE}/destinations/${id}`);
-  const data = await response.json();
-  console.log(data);
-  return data;
+export const fetchDestinationById = async (id, token) => {
+  const headers = {};
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  const response = await fetch(`${API_BASE}/destinations/${id}`, {
+    headers,
+    cache: "no-store",
+  });
+  if (!response.ok) return null;
+  return response.json();
 };
 
 export const addDestination = async (data) => {

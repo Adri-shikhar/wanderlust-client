@@ -1,4 +1,10 @@
-import { createAuthClient } from "better-auth/react";
+"use client";
 
-/** Same-origin `/api/auth` by default; set NEXT_PUBLIC_AUTH_URL if auth lives elsewhere. */
-export const authClient = createAuthClient();
+import { createAuthClient } from "better-auth/react";
+import { jwtClient } from "better-auth/client/plugins";
+import { getAuthBaseURL } from "./auth-url";
+
+export const authClient = createAuthClient({
+  baseURL: getAuthBaseURL(),
+  plugins: [jwtClient()],
+});

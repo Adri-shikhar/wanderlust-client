@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
+import { jwt } from "better-auth/plugins";
 import { getServerAuthBaseURL } from "./auth-url";
 
 const client = new MongoClient(process.env.MONGODB_URI);
@@ -29,4 +30,12 @@ export const auth = betterAuth({
         profile.picture ? { image: String(profile.picture) } : {},
     },
   },
+  session: {
+    cookieCache: {
+      enabled: true,
+      strategy: "jwt",
+      maxAge: 60 * 60,
+    },
+  },
+  plugins: [jwt()],
 });

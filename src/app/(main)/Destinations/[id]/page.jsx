@@ -1,8 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { headers } from "next/headers";
+import { notFound, redirect } from "next/navigation";
 import DestinationBookingActions from "@/components/DestinationBookingActions";
 import { fetchDestinationById } from "../../lib/data";
+import { auth } from "../../lib/auth";
 import Delete_button from "@/components/Delete_button";
 
 const accent = "#33A1C9";
@@ -37,7 +39,15 @@ function CheckIcon() {
 
 export default async function DestinationPage({ params }) {
   const { id } = await params;
-  const destination = await fetchDestinationById(id);
+
+  const { token } = await auth.api.getToken({
+    headers: await headers(),
+  });
+  if (!token) {
+    redirect(`/Login?callbackUrl=${encodeURIComponent(`/Destinations/${id}`)}`);
+  }
+
+  const destination = await fetchDestinationById(id, token);
 
   if (!destination) {
     notFound();
